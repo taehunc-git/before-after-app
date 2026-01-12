@@ -1,0 +1,79 @@
+/* 기본 스타일 초기화 */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { 
+    background-color: #1a1a1a; /* 다크 모드 감성 */
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 500px; /* 모바일 적정 너비 */
+    padding: 20px;
+}
+
+header { margin-bottom: 20px; text-align: center; }
+h1 { font-size: 1.8rem; letter-spacing: -1px; }
+header p { color: #888; font-size: 0.9rem; }
+
+/* 비교 컨테이너 */
+.comparison-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* 정사각형 비율로 모바일 최적화 */
+    overflow: hidden;
+    border-radius: 20px;
+    border: 2px solid #333;
+}
+
+/* Before/After 라벨 */
+.label {
+    position: absolute;
+    top: 15px;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    z-index: 5;
+    pointer-events: none; /* 클릭 방해 금지 */
+}
+.label-before { left: 15px; }
+.label-after { right: 15px; }
+
+/* 업로드 버튼 그룹 */
+.button-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.custom-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 55px; /* 엄지손가락으로 누르기 편한 크기 */
+    background: #333;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.custom-btn:active { background: #555; transform: scale(0.98); }
+
+/* 슬라이더 핸들 (모바일 전용) */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 40px; /* 터치 영역 확대 */
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}

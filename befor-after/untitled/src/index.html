@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* CSS: 디자인 */
+        body { background: #1a1a1a; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
+        .app-container { width: 100%; max-width: 400px; text-align: center; }
+        
+        /* 사진이 들어갈 박스 */
+        .comparison-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #333; /* 사진 없을 때 색상 */
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .img-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Before 이미지는 위쪽에 배치하고 슬라이더로 깎음 */
+        #beforeImg {
+            z-index: 2;
+            clip-path: inset(0 50% 0 0); /* 초기값 50% */
+            background-color: #444; /* 구분용 */
+        }
+        
+        #afterImg {
+            z-index: 1;
+            background-color: #222; /* 구분용 */
+        }
+
+        /* 투명 슬라이더 (사진 위를 덮음) */
+        .slider {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            -webkit-appearance: none;
+            background: transparent;
+            z-index: 10;
+            cursor: ew-resize;
+            margin: 0;
+        }
+
+        /* 슬라이더 손잡이 */
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 4px; height: 400px; background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* 버튼 스타일 */
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-group label {
+            flex: 1; background: #4CAF50; padding: 15px;
+            border-radius: 10px; cursor: pointer; font-weight: bold;
+        }
+        input[type="file"] { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <h2>✨ 비포앤애프터</h2>
+        <p>사진을 각각 선택해주세요</p>
+
+        <div class="comparison-container">
+            <div id="afterImg" class="img-layer"></div>
+            <div id="beforeImg" class="img-layer"></div>
+            <input type="range" min="0" max="100" value="50" class="slider" id="handle">
+        </div>
+
+        <div class="btn-group">
+            <label for="fileBefore">비포 선택</label>
+            <input type="file" id="fileBefore" accept="image/*">
+            
+            <label for="fileAfter">애프터 선택</label>
+            <input type="file" id="fileAfter" accept="image/*">
+        </div>
+    </div>
+
+    <script>
+        // JS: 기능
+        const handle = document.getElementById('handle');
+        const beforeImg = document.getElementById('beforeImg');
+        const afterImg = document.getElementById('afterImg');
+        const fileBefore = document.getElementById('fileBefore');
+        const fileAfter = document.getElementById('fileAfter');
+
+        // 1. 슬라이더 바 작동
+        handle.addEventListener('input', (e) => {
+            const val = e.target.value;
+            beforeImg.style.clipPath = `inset(0 ${100 - val}% 0 0)`;
+        });
+
+        // 2. 사진 업로드 함수
+        function readURL(input, target) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    target.style.backgroundImage = `url(${e.target.result})`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        fileBefore.addEventListener('change', () => readURL(fileBefore, beforeImg));
+        fileAfter.addEventListener('change', () => readURL(fileAfter, afterImg));
+    </script>
+</body>
+</html>
