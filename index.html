@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비포앤애프터 클라우드</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .app-container { width: 100%; max-width: 400px; text-align: center; }
+        .comparison-container { position: relative; width: 100%; aspect-ratio: 1/1; background: #222; border-radius: 20px; overflow: hidden; margin-top: 20px; border: 1px solid #333; }
+        .img-layer { position: absolute; inset: 0; background-size: cover; background-position: center; }
+        #beforeImg { z-index: 2; clip-path: inset(0 50% 0 0); }
+        .slider { position: absolute; inset: 0; -webkit-appearance: none; background: transparent; z-index: 10; cursor: ew-resize; margin: 0; width: 100%; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 4px; height: 100vh; background: white; }
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn-group label { background: #333; padding: 15px; border-radius: 12px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        input[type="file"] { display: none; }
+        #status { font-size: 0.8rem; color: #4CAF50; margin-top: 10px; height: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <h2>✨ B&A Cloud</h2>
+    <div class="comparison-container">
+        <div id="afterImg" class="img-layer"></div>
+        <div id="beforeImg" class="img-layer"></div>
+        <input type="range" min="0" max="100" value="50" class="slider" id="handle">
+    </div>
+    <div id="status"></div>
+    <div class="btn-group">
+        <label for="fileBefore">📷 비포 업로드</label>
+        <input type="file" id="fileBefore" accept="image/*">
+        <label for="fileAfter">📸 애프터 업로드</label>
+        <input type="file" id="fileAfter" accept="image/*">
+    </div>
+</div>
+
+<script>
+    // 🔑 사용자님의 실제 열쇠를 넣어두었습니다!
+    const SUPABASE_URL = 'https://woxasyphiqssmsnoslfx.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_nY-M02i1e3wLxNDMuzn2CQ_pSGr38W3S-428610534c0347ec0667923762886c5f7823e597'; 
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const handle = document.getElementById('handle');
+    const beforeImg = document.getElementById('beforeImg');
+    const afterImg = document.getElementById('afterImg');
+    const status = document.getElementById('status');
+
+    handle.addEventListener('input', (e) => {
+        beforeImg.style.clipPath = `inset(0 ${100 - e.target.value}% 0 0)`;
+    });
+
+    async function uploadAndShow(file, target) {
+        if (!file) return;
+        status.innerText = '서버에 저장 중... ☁️';
+        
+        const fileName = `${Date.now()}_${file.name}`;
+        
+        // PHOTOS 버킷에 업로드
+        const { data, error } = await supabaseClient.storage
+            .from('PHOTOS')
+            .upload(fileName, file);
+
+        if (error) {
+            alert('업로드 실패: ' + error.message);
+            status.innerText = '오류 발생 ❌';
+        } else {
+            const { data: urlData } = supabaseClient.storage.from('PHOTOS').getPublicUrl(fileName);
+            target.style.backgroundImage = `url('${urlData.publicUrl}')`;
+            status.innerText = '저장 완료! ✅';
+        }
+    }
+
+    document.getElementById('fileBefore').addEventListener('change', (e) => uploadAndShow(e.target.files[0], beforeImg));
+    document.getElementById('fileAfter').addEventListener('change', (e) => uploadAndShow(e.target.files[0], afterImg));
+</script>
+</body>
+</html>
