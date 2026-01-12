@@ -9,7 +9,21 @@
         body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
         .app-container { width: 100%; max-width: 400px; text-align: center; }
         .comparison-container { position: relative; width: 100%; aspect-ratio: 1/1; background: #222; border-radius: 20px; overflow: hidden; margin-top: 20px; border: 1px solid #333; }
-        .img-layer { position: absolute; inset: 0; background-size: cover; background-position: center; }
+        /* ✅ 수정 후 (복사해서 덮어씌우세요) */
+.img-layer { 
+    position: absolute; 
+    inset: 0; 
+    background-size: contain;    /* 사진 전체가 박스 안에 쏙 들어가게 합니다 */
+    background-repeat: no-repeat; /* 사진이 반복되지 않게 합니다 */
+    background-position: center;  /* 중앙에 배치합니다 */
+}
+
+/* 추가 팁: 배경이 검은색이라 사진 외곽이 안 보일 수 있으니 
+   비교 박스의 배경색을 조금 밝게 조절하면 더 보기 좋습니다. */
+.comparison-container {
+    background: #1a1a1a; /* 배경을 살짝 밝게 */
+    border: 1px solid #444;
+}
         #beforeImg { z-index: 2; clip-path: inset(0 50% 0 0); }
         .slider { position: absolute; inset: 0; -webkit-appearance: none; background: transparent; z-index: 10; cursor: ew-resize; margin: 0; width: 100%; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 4px; height: 100vh; background: white; }
