@@ -7,42 +7,50 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
     body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
-    .app-container { width: 100%; max-width: 400px; text-align: center; }
+    .app-container { width: 100%; max-width: 500px; text-align: center; }
     
-    /* 비교 박스 설정 */
     .comparison-container { 
         position: relative; 
         width: 100%; 
-        aspect-ratio: 4/5; /* 📸 보통 사진 비율인 4:5로 설정 (필요시 1/1로 변경) */
+        /* ✅ 고정 비율 대신 최소 높이만 지정하여 사진이 잘리지 않게 합니다 */
+        min-height: 300px;
         background: #000; 
         border-radius: 12px; 
         overflow: hidden; 
         margin-top: 20px; 
-        border: 1px solid #333; 
+        border: 1px solid #333;
+        display: flex;
+        align-items: center; /* 세로 중앙 정렬 */
     }
 
     .img-layer { 
         position: absolute; 
-        inset: 0; 
-        /* ✅ 이 세 줄이 핵심입니다 */
-        background-size: contain;    /* 사진 전체가 다 들어오게 함 */
-        background-repeat: no-repeat; /* 사진이 중복되지 않게 함 */
-        background-position: center;  /* 가운데 정렬 */
+        width: 100%;
+        height: 100%;
+        /* ✅ object-fit 기능을 CSS 배경에서 흉내냅니다 */
+        background-size: contain !important; /* !important를 붙여 캐시보다 우선순위를 높입니다 */
+        background-repeat: no-repeat;
+        background-position: center;
     }
 
-    /* 비포 사진(위 레이어) 설정 */
     #beforeImg { 
         z-index: 2; 
-        clip-path: inset(0 50% 0 0); /* 초기 상태: 절반만 보여줌 */
-        background-color: #000;      /* 여백을 검은색으로 처리 */
+        clip-path: inset(0 50% 0 0); 
     }
 
-    /* 애프터 사진(아래 레이어) 설정 */
-    #afterImg {
-        background-color: #000;
+    /* 슬라이더가 상자 전체를 덮도록 높이 조절 */
+    .slider { 
+        position: absolute; 
+        top: 0;
+        left: 0;
+        width: 100%; 
+        height: 100%; 
+        -webkit-appearance: none; 
+        background: transparent; 
+        z-index: 10; 
+        cursor: ew-resize; 
+        margin: 0; 
     }
-
-    .slider { position: absolute; inset: 0; -webkit-appearance: none; background: transparent; z-index: 10; cursor: ew-resize; margin: 0; width: 100%; height: 100%; }
     .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 4px; height: 1000px; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
     
     .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
