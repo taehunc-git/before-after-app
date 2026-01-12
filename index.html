@@ -20,7 +20,6 @@
     </style>
 </head>
 <body>
-
 <div class="app-container">
     <h2>✨ B&A Cloud</h2>
     <div class="comparison-container">
@@ -38,10 +37,8 @@
 </div>
 
 <script>
-    // 🔑 사용자님의 실제 열쇠를 넣어두었습니다!
     const SUPABASE_URL = 'https://woxasyphiqssmsnoslfx.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_nY-M02i1e3wLxNDMuzn2CQ_pSGr3wir'; 
-
+    const SUPABASE_KEY = 'sb_publishable_nY-M02i1e3wLxNDMuzn2CQ_pSGr38W3S-428610534c0347ec0667923762886c5f7823e597'; 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const handle = document.getElementById('handle');
@@ -56,19 +53,18 @@
     async function uploadAndShow(file, target) {
         if (!file) return;
         status.innerText = '서버에 저장 중... ☁️';
-        
         const fileName = `${Date.now()}_${file.name}`;
         
-        // PHOTOS 버킷에 업로드
+        // ⚠️ 버킷 이름을 'Photos'로 수정했습니다.
         const { data, error } = await supabaseClient.storage
-            .from('PHOTOS')
+            .from('Photos') 
             .upload(fileName, file);
 
         if (error) {
             alert('업로드 실패: ' + error.message);
             status.innerText = '오류 발생 ❌';
         } else {
-            const { data: urlData } = supabaseClient.storage.from('PHOTOS').getPublicUrl(fileName);
+            const { data: urlData } = supabaseClient.storage.from('Photos').getPublicUrl(fileName);
             target.style.backgroundImage = `url('${urlData.publicUrl}')`;
             status.innerText = '저장 완료! ✅';
         }
