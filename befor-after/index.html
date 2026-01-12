@@ -6,32 +6,50 @@
     <title>비포앤애프터 클라우드</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .app-container { width: 100%; max-width: 400px; text-align: center; }
-        .comparison-container { position: relative; width: 100%; aspect-ratio: 1/1; background: #222; border-radius: 20px; overflow: hidden; margin-top: 20px; border: 1px solid #333; }
-        /* ✅ 수정 후 (복사해서 덮어씌우세요) */
-.img-layer { 
-    position: absolute; 
-    inset: 0; 
-    background-size: contain;    /* 사진 전체가 박스 안에 쏙 들어가게 합니다 */
-    background-repeat: no-repeat; /* 사진이 반복되지 않게 합니다 */
-    background-position: center;  /* 중앙에 배치합니다 */
-}
+    body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+    .app-container { width: 100%; max-width: 400px; text-align: center; }
+    
+    /* 비교 박스 설정 */
+    .comparison-container { 
+        position: relative; 
+        width: 100%; 
+        aspect-ratio: 4/5; /* 📸 보통 사진 비율인 4:5로 설정 (필요시 1/1로 변경) */
+        background: #000; 
+        border-radius: 12px; 
+        overflow: hidden; 
+        margin-top: 20px; 
+        border: 1px solid #333; 
+    }
 
-/* 추가 팁: 배경이 검은색이라 사진 외곽이 안 보일 수 있으니 
-   비교 박스의 배경색을 조금 밝게 조절하면 더 보기 좋습니다. */
-.comparison-container {
-    background: #1a1a1a; /* 배경을 살짝 밝게 */
-    border: 1px solid #444;
-}
-        #beforeImg { z-index: 2; clip-path: inset(0 50% 0 0); }
-        .slider { position: absolute; inset: 0; -webkit-appearance: none; background: transparent; z-index: 10; cursor: ew-resize; margin: 0; width: 100%; }
-        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 4px; height: 100vh; background: white; }
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .btn-group label { background: #333; padding: 15px; border-radius: 12px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
-        input[type="file"] { display: none; }
-        #status { font-size: 0.8rem; color: #4CAF50; margin-top: 10px; height: 20px; }
-    </style>
+    .img-layer { 
+        position: absolute; 
+        inset: 0; 
+        /* ✅ 이 세 줄이 핵심입니다 */
+        background-size: contain;    /* 사진 전체가 다 들어오게 함 */
+        background-repeat: no-repeat; /* 사진이 중복되지 않게 함 */
+        background-position: center;  /* 가운데 정렬 */
+    }
+
+    /* 비포 사진(위 레이어) 설정 */
+    #beforeImg { 
+        z-index: 2; 
+        clip-path: inset(0 50% 0 0); /* 초기 상태: 절반만 보여줌 */
+        background-color: #000;      /* 여백을 검은색으로 처리 */
+    }
+
+    /* 애프터 사진(아래 레이어) 설정 */
+    #afterImg {
+        background-color: #000;
+    }
+
+    .slider { position: absolute; inset: 0; -webkit-appearance: none; background: transparent; z-index: 10; cursor: ew-resize; margin: 0; width: 100%; height: 100%; }
+    .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 4px; height: 1000px; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+    
+    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+    .btn-group label { background: #333; padding: 15px; border-radius: 12px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+    input[type="file"] { display: none; }
+    #status { font-size: 0.8rem; color: #4CAF50; margin-top: 10px; height: 20px; }
+</style>
 </head>
 <body>
 
