@@ -1,131 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>Untitled</title>
-    <link rel="stylesheet" href="./style.css">
-
-  </head>
-    
-  <body>
-  <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비포앤애프터 클라우드</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* CSS: 디자인 */
-        body { background: #1a1a1a; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
+        body { background: #121212; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
         .app-container { width: 100%; max-width: 400px; text-align: center; }
-        
-        /* 사진이 들어갈 박스 */
-        .comparison-container {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            background: #333; /* 사진 없을 때 색상 */
-            border-radius: 15px;
-            overflow: hidden;
-        }
-
-        .img-layer {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover;
-            background-position: center;
-        }
-
-        /* Before 이미지는 위쪽에 배치하고 슬라이더로 깎음 */
-        #beforeImg {
-            z-index: 2;
-            clip-path: inset(0 50% 0 0); /* 초기값 50% */
-            background-color: #444; /* 구분용 */
-        }
-        
-        #afterImg {
-            z-index: 1;
-            background-color: #222; /* 구분용 */
-        }
-
-        /* 투명 슬라이더 (사진 위를 덮음) */
-        .slider {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            -webkit-appearance: none;
-            background: transparent;
-            z-index: 10;
-            cursor: ew-resize;
-            margin: 0;
-        }
-
-        /* 슬라이더 손잡이 */
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 4px; height: 400px; background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        /* 버튼 스타일 */
-        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-group label {
-            flex: 1; background: #4CAF50; padding: 15px;
-            border-radius: 10px; cursor: pointer; font-weight: bold;
-        }
+        .comparison-container { position: relative; width: 100%; aspect-ratio: 1/1; background: #222; border-radius: 20px; overflow: hidden; margin-top: 20px; }
+        .img-layer { position: absolute; inset: 0; background-size: cover; background-position: center; }
+        #beforeImg { z-index: 2; clip-path: inset(0 50% 0 0); }
+        .slider { position: absolute; inset: 0; -webkit-appearance: none; background: transparent; z-index: 10; cursor: ew-resize; margin: 0; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 4px; height: 100vh; background: white; }
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn-group label { background: #333; padding: 15px; border-radius: 12px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.2s; }
+        .btn-group label:active { background: #555; transform: scale(0.95); }
         input[type="file"] { display: none; }
+        .loading-text { font-size: 0.7rem; color: #888; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <h2>✨ 비포앤애프터</h2>
-        <p>사진을 각각 선택해주세요</p>
+<div class="app-container">
+    <h2>✨ B&A Cloud</h2>
+    <p style="color: #888; font-size: 0.9rem;">사진을 업로드하면 서버에 저장됩니다.</p>
 
-        <div class="comparison-container">
-            <div id="afterImg" class="img-layer"></div>
-            <div id="beforeImg" class="img-layer"></div>
-            <input type="range" min="0" max="100" value="50" class="slider" id="handle">
-        </div>
-
-        <div class="btn-group">
-            <label for="fileBefore">비포 선택</label>
-            <input type="file" id="fileBefore" accept="image/*">
-            
-            <label for="fileAfter">애프터 선택</label>
-            <input type="file" id="fileAfter" accept="image/*">
-        </div>
+    <div class="comparison-container">
+        <div id="afterImg" class="img-layer"></div>
+        <div id="beforeImg" class="img-layer"></div>
+        <input type="range" min="0" max="100" value="50" class="slider" id="handle">
     </div>
 
-    <script>
-        // JS: 기능
-        const handle = document.getElementById('handle');
-        const beforeImg = document.getElementById('beforeImg');
-        const afterImg = document.getElementById('afterImg');
-        const fileBefore = document.getElementById('fileBefore');
-        const fileAfter = document.getElementById('fileAfter');
+    <div id="loading" class="loading-text">서버에 저장 중... ☁️</div>
 
-        // 1. 슬라이더 바 작동
-        handle.addEventListener('input', (e) => {
-            const val = e.target.value;
-            beforeImg.style.clipPath = `inset(0 ${100 - val}% 0 0)`;
-        });
+    <div class="btn-group">
+        <label for="fileBefore">📷 비포 업로드</label>
+        <input type="file" id="fileBefore" accept="image/*">
+        
+        <label for="fileAfter">📸 애프터 업로드</label>
+        <input type="file" id="fileAfter" accept="image/*">
+    </div>
+</div>
 
-        // 2. 사진 업로드 함수
-        function readURL(input, target) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    target.style.backgroundImage = `url(${e.target.result})`;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
+<script>
+    // 🔑 내 열쇠 넣기
+    const SUPABASE_URL = 'https://woxasyphiqssmsnoslfx.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_nY-M02i1e3wLxNDMuzn2CQ_pSGr3wir';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const handle = document.getElementById('handle');
+    const beforeImg = document.getElementById('beforeImg');
+    const afterImg = document.getElementById('afterImg');
+    const loading = document.getElementById('loading');
+
+    // 슬라이더 조절
+    handle.addEventListener('input', (e) => {
+        beforeImg.style.clipPath = `inset(0 ${100 - e.target.value}% 0 0)`;
+    });
+
+    // 서버 업로드 함수
+    async function uploadAndShow(file, target) {
+        if (!file) return;
+        loading.style.display = 'block';
+
+        const fileName = `${Date.now()}_${file.name}`;
+        
+        // 1. Supabase Storage (PHOTOS 버킷)에 업로드
+        const { data, error } = await supabase.storage
+            .from('PHOTOS')
+            .upload(fileName, file);
+
+        if (error) {
+            alert('업로드 실패: ' + error.message);
+        } else {
+            // 2. 업로드된 사진의 공개 주소 가져오기
+            const { data: urlData } = supabase.storage.from('PHOTOS').getPublicUrl(fileName);
+            target.style.backgroundImage = `url('${urlData.publicUrl}')`;
         }
+        loading.style.display = 'none';
+    }
 
-        fileBefore.addEventListener('change', () => readURL(fileBefore, beforeImg));
-        fileAfter.addEventListener('change', () => readURL(fileAfter, afterImg));
-    </script>
+    document.getElementById('fileBefore').addEventListener('change', (e) => uploadAndShow(e.target.files[0], beforeImg));
+    document.getElementById('fileAfter').addEventListener('change', (e) => uploadAndShow(e.target.files[0], afterImg));
+</script>
+
 </body>
-</html>
-    <script  src="./script.js"></script>
-
-  </body>
-  
 </html>
